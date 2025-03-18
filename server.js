@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.send('<!DOCTYPE html>
+  res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
 <title>Login-Form</title>
@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 </div>
 </div>
 </body>
-</html>');
+</html>`);
 });
 
 const PORT = 3000;
