@@ -1,84 +1,135 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des VMs</title>
+    <title>AI Chatbot</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
-        table { width: 80%; margin: auto; border-collapse: collapse; }
-        th, td { border: 1px solid #ccc; padding: 10px; }
-        th { background-color: #4CAF50; color: white; }
-        button { margin: 5px; padding: 5px 10px; cursor: pointer; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        #chat-container {
+            max-width: 400px;
+            margin: 50px auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #chat-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        #chat-messages {
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        #user-input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: none;
+            border-top: 1px solid #ccc;
+            outline: none;
+        }
+
+        /* Style for the user's message (blue) */
+        .user {
+            color: blue;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        /* Style for the bot's message (green) */
+        .bot {
+            color: green;
+            text-align: left;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Gestion des Machines Virtuelles VMware</h1>
-    <button onclick="loadVMs()">🔄 Rafraîchir la liste</button>
-    <table>
-        <thead>
-            <tr>
-                <th>Nom de la VM</th>
-                <th>Statut</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="vm-list"></tbody>
-    </table>
+<div id="chat-container">
+    <div id="chat-header">
+        AI Chatbot
+    </div>
+    <div id="chat-messages"></div>
+    <input type="text" id="user-input" placeholder="Type your message...">
+</div>
 
-    <script>
-        function loadVMs() {
-            fetch("http://localhost:3000/list-vms")
-                .then(response => response.json())
-                .then(data => {
-                    let rows = "";
-                    data.vms.forEach(vm => {
-                        rows += `
-                            <tr>
-                                <td>${vm.path}</td>
-                                <td>${vm.status}</td>
-                                <td>
-                                    <button onclick="startVM('${vm.path}')">🟢 Démarrer</button>
-                                    <button onclick="stopVM('${vm.path}')">🔴 Arrêter</button>
-                                    <button onclick="deleteVM('${vm.path}')">🗑 Supprimer</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById("vm-list").innerHTML = rows;
-                })
-                .catch(error => console.error("Erreur:", error));
+<script>
+    // Bot responses database
+    var responsesDatabase = {
+        greetings: {
+            hello: 'Hi there!',
+            hi: 'Hello!',
+            hey: 'Hey',
+        },
+        feelings: {
+            'how are you': 'I am just a computer program that was a pain to make, but how are you',
+            fine: 'That\'s great to hear!',
+            good: 'I\'m doing well, thank you!',
+            bad: 'I\'m sorry to hear that if you need anything you know where to find me!',
+        },
+        farewell: {
+            bye: 'Goodbye! Have a great day!',
+            goodbye: 'Farewell!',
+            seeYou: 'See you later!',
+        },
+        default: 'I did not understand that. Can you please rephrase?',
+    };
+
+    document.getElementById('user-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            handleUserInput();
         }
+    });
 
-        function startVM(vmPath) {
-            fetch("http://localhost:3000/start-vm", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ vmPath })
-            }).then(() => loadVMs());
+    function handleUserInput() {
+        var userInput = document.getElementById('user-input').value;
+        if (userInput.trim() !== '') {
+            appendMessage('user', userInput);
+            document.getElementById('user-input').value = '';
+            setTimeout(function () {
+                var response = getBotResponse(userInput);
+                appendMessage('bot', response);
+            }, 500); // Simulating response delay
         }
+    }
 
-        function stopVM(vmPath) {
-            fetch("http://localhost:3000/stop-vm", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ vmPath })
-            }).then(() => loadVMs());
-        }
+    function getBotResponse(userInput) {
+        // Convert user input to lowercase for case-insensitive comparison
+        userInput = userInput.toLowerCase();
 
-        function deleteVM(vmPath) {
-            if (confirm("Voulez-vous vraiment supprimer cette VM ?")) {
-                fetch("http://localhost:3000/delete-vm", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ vmPath })
-                }).then(() => loadVMs());
+        // Check if the user input matches any predefined responses
+        for (var category in responsesDatabase) {
+            if (responsesDatabase.hasOwnProperty(category)) {
+                if (responsesDatabase[category][userInput]) {
+                    return responsesDatabase[category][userInput];
+                }
             }
         }
 
-        loadVMs(); // Charger les VMs au démarrage
-    </script>
+        // If no match found, return the default response
+        return responsesDatabase.default;
+    }
+
+    function appendMessage(sender, message) {
+        var chatMessages = document.getElementById('chat-messages');
+        var messageDiv = document.createElement('div');
+        messageDiv.className = sender;
+        messageDiv.innerHTML = message;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+</script>
 
 </body>
 </html>
