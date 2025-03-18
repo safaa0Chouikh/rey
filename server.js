@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: white;
         }
         #chat-header {
             background-color: #4CAF50;
@@ -34,6 +35,8 @@ app.get('/', (req, res) => {
             max-height: 300px;
             overflow-y: auto;
         }
+        .user { color: blue; font-weight: bold; }
+        .bot { color: green; font-weight: bold; }
         #user-input {
             width: 100%;
             padding: 10px;
@@ -47,67 +50,39 @@ app.get('/', (req, res) => {
 <body>
 
 <div id="chat-container">
-    <div id="chat-header">
-        AI Chatbot
-    </div>
+    <div id="chat-header">AI Chatbot</div>
     <div id="chat-messages"></div>
     <input type="text" id="user-input" placeholder="Type your message...">
 </div>
 
 <script>
-    // Bot responses database
     var responsesDatabase = {
-        greetings: {
-            hello: 'Hi there!',
-            hi: 'Hello!',
-            hey: 'Hey',
-        },
-        feelings: {
-            'how are you': 'I am just a computer program that was a pain to make, but how are you',
-            fine: 'That\'s great to hear!',
-            good: 'I\'m doing well, thank you!',
-            bad: 'I\'m sorry to hear that if you need anything you know where to find me!',
-        },
-        farewell: {
-            bye: 'Goodbye! Have a great day!',
-            goodbye: 'Farewell!',
-            seeYou: 'See you later!',
-        },
-        default: 'I did not understand that. Can you please rephrase?',
+        greetings: { hello: 'Hi there!', hi: 'Hello!', hey: 'Hey' },
+        feelings: { 'how are you': 'I am good! How about you?', fine: 'Glad to hear!', bad: 'Hope your day gets better!' },
+        farewell: { bye: 'Goodbye!', goodbye: 'See you later!' },
+        default: 'I did not understand that. Can you please rephrase?'
     };
 
     document.getElementById('user-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            handleUserInput();
-        }
+        if (e.key === 'Enter') { handleUserInput(); }
     });
 
     function handleUserInput() {
-        var userInput = document.getElementById('user-input').value;
-        if (userInput.trim() !== '') {
+        var userInput = document.getElementById('user-input').value.trim();
+        if (userInput) {
             appendMessage('user', userInput);
             document.getElementById('user-input').value = '';
-            setTimeout(function () {
-                var response = getBotResponse(userInput);
-                appendMessage('bot', response);
-            }, 500); // Simulating response delay
+            setTimeout(() => appendMessage('bot', getBotResponse(userInput)), 500);
         }
     }
 
     function getBotResponse(userInput) {
-        // Convert user input to lowercase for case-insensitive comparison
         userInput = userInput.toLowerCase();
-
-        // Check if the user input matches any predefined responses
         for (var category in responsesDatabase) {
-            if (responsesDatabase.hasOwnProperty(category)) {
-                if (responsesDatabase[category][userInput]) {
-                    return responsesDatabase[category][userInput];
-                }
+            if (responsesDatabase[category][userInput]) {
+                return responsesDatabase[category][userInput];
             }
         }
-
-        // If no match found, return the default response
         return responsesDatabase.default;
     }
 
@@ -115,15 +90,14 @@ app.get('/', (req, res) => {
         var chatMessages = document.getElementById('chat-messages');
         var messageDiv = document.createElement('div');
         messageDiv.className = sender;
-        messageDiv.innerHTML = message;
+        messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 </script>
 
 </body>
-</html>
-`);
+</html>`);
 });
 
 const PORT = 3000;
