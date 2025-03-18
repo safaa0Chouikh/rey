@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Machines Virtuelles</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        button {
+            font-size: 18px;
+            margin: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .start { background-color: #4CAF50; color: white; }
+        .stop { background-color: #ff4444; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>Gestion des Machines Virtuelles VMware</h1>
+    <button class="start" onclick="startVM()">Démarrer la VM</button>
+    <button class="stop" onclick="stopVM()">Arrêter la VM</button>
+
+    <script>
+        function startVM() {
+            fetch('/start')
+                .then(response => response.text())
+                .then(data => alert(data))
+                .catch(error => alert('Erreur : ' + error));
+        }
+
+        function stopVM() {
+            fetch('/stop')
+                .then(response => response.text())
+                .then(data => alert(data))
+                .catch(error => alert('Erreur : ' + error));
+        }
+    </script>
+
+</body>
+</html>
