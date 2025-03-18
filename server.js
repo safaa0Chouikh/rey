@@ -9,7 +9,7 @@ const port = 3000;
 const vmrunPath = '"C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"';
 
 // 📍 Chemin vers ta machine virtuelle (.vmx)
-const vmxPath = 'C:\Users\pc\OneDrive - OFPPT\Documents\Virtual Machines';
+const vmxPath = 'C:\Users\pc\OneDrive - OFPPT\Documents\Virtual Machines\Ubuntu 64-bit\Ubuntu 64-bit.vmx';
 
 // 🔵 Démarrer la VM
 app.get('/start', (req, res) => {
