@@ -55,7 +55,6 @@ app.get('/', (req, res) => {
 </div>
 
 <script>
-    // Bot responses database
     var responsesDatabase = {
         greetings: {
             hello: 'Hi there!',
@@ -63,7 +62,7 @@ app.get('/', (req, res) => {
             hey: 'Hey',
         },
         feelings: {
-            'how are you': 'I am just a computer program that was a pain to make, but how are you',
+            'how are you': 'I am just a computer program that was a pain to make, but how are you?',
             fine: 'That\'s great to hear!',
             good: 'I\'m doing well, thank you!',
             bad: 'I\'m sorry to hear that if you need anything you know where to find me!',
