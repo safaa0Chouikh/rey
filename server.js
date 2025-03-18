@@ -1,44 +1,26 @@
-const express = require('express');
-const { exec } = require('child_process');
-const path = require('path');
+const express = require("express");
+const { exec } = require("child_process");
+const path = require("path");
 
 const app = express();
-const port = 3000;
+const PORT = 3000;
 
-// 📍 Chemin vers vmrun (change selon ton installation)
-const vmrunPath = '"C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"';
+// Chemin vers vmrun.exe
+const VMRUN_PATH = `"C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmrun.exe"`;
+// Chemin vers ta machine virtuelle
+const VM_PATH = `"C:\\Users\\pc\\OneDrive - OFPPT\\Documents\\Virtual Machines\\Ubuntu 64-bit\\Ubuntu 64-bit.vmx"`;
 
-// 📍 Chemin vers ta machine virtuelle (.vmx)
-const vmxPath = 'C:\Users\pc\OneDrive - OFPPT\Documents\Virtual Machines\Ubuntu 64-bit\Ubuntu 64-bit.vmx';
+// Route pour démarrer la VM
+app.get("/start-vm", (req, res) => {
+    const command = `${VMRUN_PATH} -T ws start ${VM_PATH}`;
 
-// 🔵 Démarrer la VM
-app.get('/start', (req, res) => {
-    exec(`${vmrunPath} -T ws start "${vmxPath}"`, (error, stdout, stderr) => {
+    exec(command, (error, stdout, stderr) => {
         if (error) {
-            res.status(500).send(`Erreur: ${stderr}`);
-            return;
+            return res.status(500).json({ success: false, message: "Erreur lors du démarrage", error: stderr });
         }
-        res.send(`Machine démarrée avec succès : ${stdout}`);
+        res.json({ success: true, message: "Machine virtuelle démarrée avec succès", output: stdout });
     });
 });
 
-// 🔴 Arrêter la VM
-app.get('/stop', (req, res) => {
-    exec(`${vmrunPath} -T ws stop "${vmxPath}"`, (error, stdout, stderr) => {
-        if (error) {
-            res.status(500).send(`Erreur: ${stderr}`);
-            return;
-        }
-        res.send(`Machine arrêtée avec succès : ${stdout}`);
-    });
-});
-
-// 🌍 Afficher la page web
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// 🚀 Lancer le serveur
-app.listen(port, () => {
-    console.log(`Serveur lancé sur http://localhost:${port}`);
-});
+// Lancer le serveur
+app
