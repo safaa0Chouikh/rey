@@ -1,17 +1,23 @@
-const express = require("express");
+const express = require("express"); // Importer Express
 const { exec } = require("child_process");
 const cors = require("cors");
+const path = require("path"); // Importer path pour servir un fichier HTML
 
-const app = express();
+const app = express(); // Initialisation d'Express
 const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
 
-const VMRUN_PATH = `"C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmrun.exe"`;
+// 📌 Route pour la page d'accueil
+app.get("/", (req, res) => {
+    res.send("<h1>Bienvenue sur le serveur de gestion VMware</h1>");
+});
 
 // 📌 Route pour lister les machines virtuelles
 app.get("/list-vms", (req, res) => {
+    const VMRUN_PATH = `"C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmrun.exe"`;
+    
     exec(`${VMRUN_PATH} -T ws list`, (error, stdout, stderr) => {
         if (error) {
             return res.status(500).json({ success: false, message: "Erreur lors de la récupération des VMs", error: stderr });
@@ -24,33 +30,7 @@ app.get("/list-vms", (req, res) => {
     });
 });
 
-// 📌 Route pour démarrer une VM
-app.post("/start-vm", (req, res) => {
-    const { vmPath } = req.body;
-    exec(`${VMRUN_PATH} -T ws start "${vmPath}"`, (error, stdout, stderr) => {
-        if (error) return res.status(500).json({ success: false, message: "Erreur au démarrage", error: stderr });
-        res.json({ success: true, message: "VM démarrée avec succès" });
-    });
-});
-
-// 📌 Route pour arrêter une VM
-app.post("/stop-vm", (req, res) => {
-    const { vmPath } = req.body;
-    exec(`${VMRUN_PATH} -T ws stop "${vmPath}"`, (error, stdout, stderr) => {
-        if (error) return res.status(500).json({ success: false, message: "Erreur à l'arrêt", error: stderr });
-        res.json({ success: true, message: "VM arrêtée avec succès" });
-    });
-});
-
-// 📌 Route pour supprimer une VM (⚠️ Attention, suppression définitive)
-app.post("/delete-vm", (req, res) => {
-    const { vmPath } = req.body;
-    exec(`del "${vmPath}"`, (error, stdout, stderr) => {
-        if (error) return res.status(500).json({ success: false, message: "Erreur lors de la suppression", error: stderr });
-        res.json({ success: true, message: "VM supprimée avec succès" });
-    });
-});
-
+// 📌 Démarrage du serveur
 app.listen(PORT, () => {
     console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
 });
