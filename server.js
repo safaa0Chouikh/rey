@@ -55,6 +55,7 @@ app.get('/', (req, res) => {
 </div>
 
 <script>
+    // Bot responses database
     var responsesDatabase = {
         greetings: {
             hello: 'Hi there!',
@@ -62,7 +63,7 @@ app.get('/', (req, res) => {
             hey: 'Hey',
         },
         feelings: {
-            'how are you': 'I am just a computer program that was a pain to make, but how are you?',
+            'how are you': 'I am just a computer program that was a pain to make, but how are you',
             fine: 'That\'s great to hear!',
             good: 'I\'m doing well, thank you!',
             bad: 'I\'m sorry to hear that if you need anything you know where to find me!',
@@ -72,7 +73,7 @@ app.get('/', (req, res) => {
             goodbye: 'Farewell!',
             seeYou: 'See you later!',
         },
-        default: 'I did not understand that. Can you please rephrase?'
+        default: 'I did not understand that. Can you please rephrase?',
     };
 
     document.getElementById('user-input').addEventListener('keypress', function (e) {
@@ -109,7 +110,7 @@ app.get('/', (req, res) => {
         var chatMessages = document.getElementById('chat-messages');
         var messageDiv = document.createElement('div');
         messageDiv.className = sender;
-        messageDiv.innerHTML = "<strong>" + sender + ":</strong> " + message;
+        messageDiv.innerHTML = '<strong>' + sender + ':</strong> ' + message;
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
